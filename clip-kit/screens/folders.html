@@ -1,0 +1,142 @@
+<!doctype html>
+<title>Folders</title>
+<meta charset="utf-8">
+<!-- Folders page (/folders) with a folder's editor drawer open and its "Add member" popover: User or group, Role (Viewer, Writer, Admin), Add. Permissions are set per folder and apply to every script, flow, app, resource and schedule inside it. A non-admin only sees the folders shared with them (folder RLS policies). Source: routes/(root)/(logged)/folders/+page.svelte, lib/components/FolderEditor.svelte; backend/windmill-api-groups/src/folders.rs. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../base.css">
+<style>
+  .lu { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .bar .acts { display: flex; gap: 10px; align-items: center; }
+  .pbody { position: relative; height: calc(100% - 58px); }
+  /* ---------- Folders page (routes/folders/+page.svelte) and FolderEditor drawer ---------- */
+  #pF { background: #fbfbfd; }
+  .ft { position: absolute; left: 28px; right: 28px; top: 26px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; overflow: hidden; }
+  /* ---------- Folders page (routes/folders/+page.svelte) and FolderEditor drawer ---------- */
+  #pF { background: #fbfbfd; }
+  .ft { position: absolute; left: 28px; right: 28px; top: 26px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; overflow: hidden; }
+  .ft .r { display: grid; grid-template-columns: 1fr 74px 74px 74px 90px 220px 60px; align-items: center; height: 58px; padding: 0 16px; border-bottom: 1px solid #f0f1f4; font-size: 12.5px; color: #3d4758; overflow: hidden; }
+  .ft .r:last-child { border-bottom: 0; }
+  .ft .r.h { height: 38px; font-size: 12px; font-weight: 500; color: #718096; background: #fafbfc; }
+  .ft .nm b { display: block; font-size: 12.5px; font-weight: 600; color: #1d2430; }
+  .ft .nm span { font-size: 11px; color: #8d93a1; }
+  .ft .nm { justify-self: start; }
+  .ft .mem { display: flex; gap: 5px; }
+  .ft .mem span { height: 22px; display: inline-flex; align-items: center; padding: 0 8px; border-radius: 11px; background: #f1f2f6; font-size: 11.5px; color: #3d4758; }
+  .ft .dots { justify-self: end; color: #8d93a1; }
+  .fdr { position: absolute; top: 0; right: 0; bottom: 0; width: 560px; background: #fff; border-left: 1px solid #e5e7eb; box-shadow: -24px 0 40px -28px rgba(15,23,42,.45); opacity: 0; }
+  .fdr .dh { height: 54px; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-bottom: 1px solid #eef0f4; font-size: 15px; font-weight: 600; color: #1d2430; }
+  .fdr .dh .x { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; color: #4b5563; }
+  .fdr .dh .sp { flex: 1; }
+  .fdr .lb { font-size: 12.5px; font-weight: 600; color: #1d2430; margin-bottom: 7px; display: flex; align-items: center; }
+  .fdr .lb .btn { margin-left: auto; height: 28px; font-size: 12px; padding: 0 10px; }
+  .fdr .inp { height: 34px; border: 1px solid #d6dae2; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 13px; color: #1d2430; }
+  .fdr .sec { position: absolute; left: 20px; right: 20px; }
+  .mt { border: 1px solid #e5e7eb; border-radius: 6px; overflow: hidden; }
+  .mt .r { display: grid; grid-template-columns: 1fr 80px 200px 60px; align-items: center; height: 46px; padding: 0 12px; border-bottom: 1px solid #f0f1f4; font-size: 12.5px; color: #3d4758; }
+  .mt .r:last-child { border-bottom: 0; }
+  .mt .r.h { height: 34px; font-size: 11.5px; color: #718096; background: #fafbfc; }
+  .mt .r b { font-weight: 500; color: #1d2430; }
+  .mt .r.hi { background: #eff6ff; }
+  .tg3 { display: inline-flex; padding: 2px; gap: 2px; border-radius: 6px; background: #eceef3; }
+  .tg3 span { height: 24px; display: grid; place-items: center; padding: 0 9px; border-radius: 5px; font-size: 11.5px; color: #5b6476; }
+  .tg3 span.on { background: #fff; color: #1d2430; font-weight: 600; box-shadow: 0 1px 2px rgba(15,23,42,.12); }
+  .mt .ac { display: flex; gap: 6px; justify-content: flex-end; color: #8d93a1; }
+  .mt .ac .lu { width: 14px; height: 14px; }
+  .fset { position: absolute; inset: 54px 0 0 0; opacity: 0; }
+
+  /* Add member popover (FolderEditor.svelte) */
+  .amp { position: absolute; right: 20px; top: 150px; width: 300px; background: #fff; border: 1px solid #e1e5ee; border-radius: 10px; box-shadow: 0 18px 40px -12px rgba(15,23,42,.3); padding: 16px; display: grid; gap: 14px; opacity: 0; z-index: 3; }
+  .amp > b { font-size: 13.5px; font-weight: 600; color: #1d2430; }
+  .amp .lb2 { font-size: 12px; font-weight: 600; color: #3d4758; margin-bottom: 6px; }
+  .amp .row2 { display: flex; gap: 6px; align-items: center; }
+  .amp .sel2 { flex: 1; height: 30px; border: 1px solid #d6dae2; border-radius: 6px; display: flex; align-items: center; padding: 0 9px; font-size: 12.5px; color: #8d93a1; }
+  .amp .sel2 .v { color: #1d2430; opacity: 0; }
+  .amp .sel2 .lu { margin-left: auto; width: 13px; height: 13px; color: #8d93a1; }
+  .amp .add { height: 32px; border-radius: 7px; background: #758ff8; color: #fff; font-size: 12.5px; font-weight: 600; display: grid; place-items: center; }
+  .amp small { font-size: 10.5px; color: #8d93a1; line-height: 1.4; }
+
+  body { margin: 0; background: var(--tint); }
+  #stage { position: relative; width: 1280px; height: 720px; overflow: hidden; background: var(--tint); }
+  #stage .win { left: 72px; top: 74px; width: 1136px; height: 572px; opacity: 1; }
+  /* the state the page shows */
+  #fdr, #amp, #selV { opacity: 1 !important; }
+  #rV { background: transparent; box-shadow: none; font-weight: 400; color: #5b6476; }
+  #rW { background: #fff; color: #1d2430; font-weight: 600; box-shadow: 0 1px 2px rgba(15,23,42,.12); }
+</style>
+<div id="stage">
+<div class="win pane" id="pF">
+    <div class="bar"><div><div class="crumb">acme</div><div class="btitle">Folders</div></div><div class="acts"><div class="btn strong"><svg class="lu" data-l="plus"></svg>New folder</div></div></div>
+    <div class="pbody">
+      <div class="ft">
+        <div class="r h"><span>Name</span><span>Scripts</span><span>Flows</span><span>Apps</span><span>Resources</span><span>Members</span><span></span></div>
+        <div class="r" id="fb"><span class="nm" id="fbN"><b>billing</b><span>Invoices, refunds and payment data</span></span><span>12</span><span>4</span><span>2</span><span>3</span><span class="mem"><span>finance</span><span>ops</span></span><span class="dots"><svg class="lu" data-l="more"></svg></span></div>
+        <div class="r" id="fh"><span class="nm"><b>hr</b><span>People, payroll and reviews</span></span><span>9</span><span>3</span><span>1</span><span>2</span><span class="mem"><span>hr</span></span><span class="dots"><svg class="lu" data-l="more"></svg></span></div>
+        <div class="r" id="fo"><span class="nm" id="foN"><b>ops</b><span>Operations: payments, alerts, on-call</span></span><span>21</span><span>6</span><span>3</span><span>4</span><span class="mem"><span>ops</span></span><span class="dots"><svg class="lu" data-l="more"></svg></span></div>
+      </div>
+      <div class="fdr" id="fdr">
+        <div class="dh"><span id="fdT">Folder ops</span><span class="sp"></span><div class="btn strong" id="fSave" style="height:30px;font-size:12px">Save</div><span class="x" id="fdX"><svg class="lu" data-l="x"></svg></span></div>
+        <div class="fset" id="fsO" style="opacity:1">
+          <div class="sec" style="top:20px"><div class="lb">Summary</div><div class="inp">Operations: payments, alerts, on-call</div></div>
+          <div class="sec" style="top:110px"><div class="lb"><span id="mCount">Members (1)</span><div class="btn ghost" id="amB"><svg class="lu" data-l="plus"></svg>Add member</div></div>
+            <div class="mt">
+              <div class="r h"><span>Name</span><span>Kind</span><span>Role</span><span></span></div>
+              <div class="r"><b>platform</b><span>Group</span><span><span class="tg3"><span>Viewer</span><span>Writer</span><span class="on">Admin</span></span></span><span class="ac"><svg class="lu" data-l="pencil"></svg><svg class="lu" data-l="trash"></svg></span></div>
+              <div class="r hi" id="mN" style="height:0;opacity:0;border-bottom:0"><b>nadia</b><span>User</span><span><span class="tg3"><span>Viewer</span><span class="on">Writer</span><span>Admin</span></span></span><span class="ac"><svg class="lu" data-l="trash"></svg></span></div>
+            </div>
+          </div>
+          <div class="amp" id="amp">
+            <b>Add a member</b>
+            <div><div class="lb2">User or group</div><div class="row2"><span class="tg3"><span class="on" id="kU">User</span><span>Group</span></span><span class="sel2" id="selU"><span class="v" id="selV">nadia</span><svg class="lu" data-l="chev"></svg></span></div></div>
+            <div><div class="lb2">Role</div><span class="tg3"><span class="on" id="rV">Viewer</span><span id="rW">Writer</span><span>Admin</span></span></div>
+            <div class="add" id="amAdd">Add</div>
+            <small>New permissions may take up to 60s to apply, due to permissions cache invalidation.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../icons.js"></script>
+<script>
+  const L = {
+    up: '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
+    code: '<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/>',
+    flow: '<path d="M3 6h11"/><path d="M8 12h13"/><path d="M3 18h11"/>',
+    app: '<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+    book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+    diff: '<path d="M12 3v14"/><path d="M5 10h14"/><path d="M5 21h14"/>',
+    pr: '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M6 9v12"/>',
+    hand: '<path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/>',
+    folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    bld: '<rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/>',
+    fork: '<circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9"/><path d="M12 12v3"/>',
+    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    more: '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+    pencil: '<path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/>',
+    trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+    boxes: '<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+    scroll: '<path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>',
+    plug: '<path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/>',
+    clip: '<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    chev: '<path d="m6 9 6 6 6-6"/>',
+    arrow: '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+    userplus: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/>',
+  };
+  Object.assign(L, {
+    home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    play: '<path d="M6 4l14 8-14 8z"/>',
+    star: '<path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+    dollar: '<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+    users: '<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-4-6.3"/>',
+    cal: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/>',
+    rocket: '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+    activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+  });
+  document.querySelectorAll("svg[data-l]").forEach((s) => { s.setAttribute("viewBox", "0 0 24 24"); s.innerHTML = L[s.dataset.l]; });
+  document.querySelectorAll("[data-icon]").forEach((el, n) => { const svg = window.CLIP_ICONS?.[el.dataset.icon]; if (svg) { el.classList.add("ck-icon"); el.innerHTML = svg.replace(/\bid="([^"]+)"/g, `id="$1-${n}"`).replace(/url\(#([^)]+)\)/g, `url(#$1-${n})`).replace(/href="#([^"]+)"/g, `href="#$1-${n}"`); } });
+</script>

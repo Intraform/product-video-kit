@@ -1,0 +1,23 @@
+        <div class="page" id="pSet">
+          <div class="wsset">
+            <div class="hd"><span class="disc"><svg class="lu"><use href="#i-bld"/></svg></span>Acme<span class="sl">/</span><b>Workspace settings</b></div>
+            <div class="tb2"><span>Users</span><span>Git sync</span><span>Deployment UI</span><span id="tAI">Windmill AI</span><span>Object storage</span><span>Error handler</span></div>
+            <div class="body" id="bOther"><div class="cardx"><h4>Members</h4><p>Invite people and manage roles.</p></div><div class="cardx"><h4>Auto-invite</h4><p>Add everyone from your domain.</p></div></div>
+            <div class="body" id="bAI" style="opacity:0">
+              <div class="cardx" id="cP"><h4>Custom system prompts</h4><p>Customize AI behavior with workspace-level system prompts. These apply to all workspace members.</p><span class="cfg" id="bCfg"><svg class="lu"><use href="#i-gear"/></svg>Configure AI prompts</span></div>
+              <div class="cardx" id="cH"><h4>Hide AI sessions</h4><p>Hides AI sessions and every other AI assistant button (chat, code generation and completion, AI fix) from all members of this workspace. AI agent steps and the AI sandbox in flows are not affected and keep using the providers configured above.</p><span class="tg" id="tgH"><i id="tgHi"><b id="tgHb"></b></i>Hide AI sessions in this workspace</span></div>
+              <div class="cardx" id="cB"><h4>AI session backups</h4><p>Browsers back their AI sessions up to this workspace's object storage, encrypted with the workspace key, and restore them on a new device or after clearing site data.</p><span class="tg"><i><b></b></i>Do not back AI sessions up to the workspace storage</span></div>
+              <div class="cardx" id="cR"><h4>AI session retention</h4><p>Deletes an AI session left untouched for this many days. Leave empty to keep sessions until their owner deletes them.</p><span class="ret" id="ret"><span id="retV">Forever</span><span>days</span></span></div>
+            </div>
+          </div>
+          <div class="pmod" id="pmod" style="opacity:0"><div class="card2"><h3>Customize AI System Prompts</h3>
+            <label>Global Mode</label><div class="ta2" id="ta2"><span class="ph2" id="ph2">Enter custom instructions for workspace-wide draft assistance</span><span id="pt"></span></div>
+            <div class="fb"><span class="btn">Cancel</span><span class="btn acc">Save</span></div></div></div>
+        </div>
+<!--CAM-->
+    <div class="dia" id="dHide"><div class="cap">Hide AI sessions</div>
+      <div class="lbl" style="left:150px;top:150px;color:#64748b">Hidden for every member</div>
+      <div class="xl off" style="left:150px;top:185px"><div><svg class="lu"><use href="#i-msgs"/></svg>AI sessions</div><div><svg class="lu"><use href="#i-bot"/></svg>AI chat</div><div><svg class="lu"><use href="#i-wand"/></svg>Code generation and completion</div><div><svg class="lu"><use href="#i-wrench"/></svg>AI fix</div></div>
+      <div class="lbl" style="left:690px;top:150px;color:#15803d">Keeps working</div>
+      <div class="xl" style="left:690px;top:185px"><div><svg class="lu" style="color:#a02cde"><use href="#i-bot"/></svg>AI agent steps in flows</div><div><svg class="lu" style="color:#14b8a6"><use href="#i-flow"/></svg>The AI sandbox in flows</div></div>
+    </div>

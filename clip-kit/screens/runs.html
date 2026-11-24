@@ -1,0 +1,127 @@
+<!doctype html>
+<title>Runs</title>
+<meta charset="utf-8">
+<!-- Runs page (/runs), light, at 680 px wide so the Tag column is dropped as the app does. Source: lib/components/RunsPage.svelte, RunChart.svelte (scatter, log duration), runs/RunsTable.svelte, runs/RunRow.svelte, runs/runs-grid.css, runs/JobStatusIcon.svelte. The chart's points are drawn by the scene's script; this page shows the frame only. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root { --bg: #eef4ff; --ink: #111827; --text: #374151; --muted: #9ca3af; --line: #ececea; --edge: #e3e7ef; --blue: #3b82f6; --blue2: #2c5beb; --soft: #eef3fe; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #dde5f3; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1280px; height: 720px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
+    .abs { position: absolute; }
+  .ico { display: inline-grid; place-items: center; width: 18px; height: 18px; flex: none; }
+  .ico svg { width: 100%; height: 100%; }
+  .lu { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .float { position: absolute; background: #fff; border: 1px solid var(--edge); box-shadow: 0 1px 2px rgba(17,24,39,.04), 0 24px 48px -24px rgba(29,36,48,.28); }
+  .ok { width: 16px; height: 16px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; flex: none; }
+  .ok::after { content: ""; width: 7px; height: 3.5px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); }
+
+  /* the runs page, as the app draws it (tag column dropped under 700 px, as the app does) */
+  #rp { left: 560px; top: 60px; width: 680px; height: 600px; border-radius: 12px; overflow: hidden; background: #fbfbfd; transform-origin: 340px 381px; }
+  #rp .lu { width: 14px; height: 14px; }
+  #rp .hd { height: 48px; display: flex; align-items: center; gap: 7px; padding: 0 16px; font-size: 12px; color: #718096; }
+  #rp .hd .disc { width: 20px; height: 20px; border-radius: 50%; background: #e8e8ef; display: grid; place-items: center; color: #505c70; }
+  #rp .hd .disc .lu { width: 13px; height: 13px; }
+  #rp .hd .sl { color: rgba(141,147,161,.4); margin: 0 3px; }
+  #rp .hd b { font-weight: 500; color: #1d2430; }
+  #rp .acts { height: 44px; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
+  #rp .acts .sp { flex: 1; }
+  #rp .tgs { display: flex; gap: 2px; padding: 2px; border-radius: 6px; background: #e8e8ef; }
+  #rp .tg { height: 26px; display: grid; place-items: center; padding: 0 9px; border-radius: 5px; border: 1px solid transparent; font-size: 12px; color: #3d4758; }
+  #rp .tg .lu { width: 13px; height: 13px; }
+  #rp .tg.on { background: #fff; border-color: rgba(156,163,175,.3); }
+  #rp .srch { width: 200px; height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px 0 11px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; font-size: 12px; color: #8d93a1; }
+  #rp .tf { height: 28px; display: flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 12px; color: #3d4758; }
+  #rp .chart { margin: 0 16px; padding: 8px 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; }
+  #rp .tabs2 { display: flex; font-size: 12px; color: #3d4758; }
+  #rp .tabs2 span { padding: 4px 8px; border-bottom: 2px solid transparent; }
+  #rp .tabs2 .on { font-weight: 600; color: #1d2430; border-color: #9ca3af; }
+  #rp .plot { position: relative; height: 150px; margin-top: 6px; border-left: 1px solid rgba(0,0,0,.1); border-bottom: 1px solid rgba(0,0,0,.1); margin-left: 62px; margin-bottom: 18px; }
+  #rp .ytl { position: absolute; left: -60px; top: 50%; transform: translate(-50%, -50%) rotate(-90deg) translateY(10px); font-size: 10px; color: #666; white-space: nowrap; }
+  #rp .tk { position: absolute; font-size: 10px; color: #666; white-space: nowrap; }
+  #rp .pt { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #4ade80; }
+  #rp .pt.fail { background: #f87171; }
+  #rp .lh { display: grid; grid-template-columns: 60px 1fr 60px 2.3fr 1.6fr 30px; align-items: end; min-height: 24px; margin: 10px 16px 6px; font-size: 12px; font-weight: 600; color: #1d2430; }
+  #rp .lh span:first-child { font-size: 11px; font-weight: 400; color: #718096; padding-left: 16px; grid-column: span 2; }
+  #rp .list2 { margin: 0 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px 6px 0 0; }
+  #rp .sep { height: 42px; display: flex; align-items: flex-end; padding: 0 0 6px 16px; border-bottom: 1px solid #e5e7eb; font-size: 12px; font-weight: 600; color: #1d2430; }
+  #rp .jr { height: 42px; display: grid; grid-template-columns: 60px 1fr 60px 2.3fr 1.6fr 30px; align-items: center; font-size: 12px; color: #3d4758; }
+  #rp .jr.sel { background: #ebefff; }
+  #rp .stb { margin-left: 16px; width: 26px; height: 20px; display: grid; place-items: center; border-radius: 6px; background: #dcfce7; color: #3b7a5b; }
+  #rp .when { font-size: 11px; color: #718096; }
+  #rp .dur { font-size: 11px; }
+  #rp .pth, #rp .trg { display: flex; align-items: center; gap: 10px; white-space: nowrap; overflow: hidden; }
+  #rp .trg { gap: 6px; }
+  #rp .ln2 { color: #718096; }
+
+</style>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 6h11"/><path d="M8 12h13"/><path d="M3 18h11"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="i-boxes" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="13" rx="1"/><rect width="8" height="8" x="13" y="13" rx="1"/><rect width="8" height="8" x="8" y="3" rx="1"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 18V6a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v2"/><path d="M3 18l3-8h16l-3 8a2 2 0 0 1-2 1.5H5A2 2 0 0 1 3 18z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-4-6.3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-bld" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+  <symbol id="mark" viewBox="0 0 256 256"><polygon fill="#3B82F6" points="227.55,69.75 186.61,69.75 101.33,69.75 129.78,119.02 158.16,119.02 228.61,119.02 256,119.02"/><polygon fill="#3B82F6" points="136.93,132.47 116.46,167.93 73.82,241.78 130.71,241.78 144.9,217.2 180.13,156.18 193.82,132.46"/><polygon fill="#3B82F6" points="121.7,131.95 101.23,96.49 58.59,22.63 30.15,71.91 44.34,96.49 79.57,157.5 93.26,181.22"/><polygon fill="#BCD4FC" points="134.78,14.22 114.31,48.21 101.33,69.75 158.22,69.75 177.97,36.95 191.67,14.22"/><polygon fill="#BCD4FC" points="64.81,131.95 25.15,131.21 0,130.74 28.44,180.01 66.73,180.72 93.26,181.21"/><polygon fill="#BCD4FC" points="165.38,181.74 184.58,216.46 196.75,238.47 225.19,189.2 206.66,155.69 193.83,132.46"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-ccheck" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-calert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-cplay" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></symbol>
+  <symbol id="i-msgs" viewBox="0 0 24 24"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-at" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/></symbol>
+</svg>
+<div id="stage">
+<div id="rp" class="float">
+    <div class="hd"><span class="disc"><svg class="lu"><use href="#i-bld"/></svg></span><span class="wsn">Acme</span><svg class="lu" style="width:13px;height:13px;color:#505c70"><use href="#i-chev"/></svg><span class="sl">/</span><svg class="lu" style="width:13px;height:13px;color:#505c70"><use href="#i-play"/></svg><b>Runs</b></div>
+    <div class="acts"><span class="tgs"><span class="tg on">All</span><span class="tg"><svg class="lu"><use href="#i-cplay"/></svg></span><span class="tg"><svg class="lu"><use href="#i-ccheck"/></svg></span><span class="tg"><svg class="lu"><use href="#i-calert"/></svg></span></span><span class="sp"></span><span class="srch">Filter runs...<svg class="lu"><use href="#i-search"/></svg></span><span class="tf"><svg class="lu"><use href="#i-refresh"/></svg>Latest runs</span></div>
+    <div class="chart"><div class="tabs2"><span class="on">Duration</span><span>Concurrency</span></div><div class="plot" id="plot"><span class="ytl">job duration (ms)</span></div></div>
+    <div class="lh"><span>37 jobs</span><span>Duration</span><span>Path</span><span>Triggered by</span></div>
+    <div class="list2"><div class="sep">October 12, 2026</div><div class="jr wk" id="r1"><span class="stb"><svg class="lu"><use href="#i-check"/></svg></span><span class="when">10/12, 09:00 AM</span><span class="dur">1.2s</span><span class="pth"><svg class="lu"><use href="#i-flow"/></svg>f/sales/weekly_sales_report</span><span class="trg"><svg class="lu"><use href="#i-cal"/></svg>f/sales/every_monday</span><svg class="lu ln2"><use href="#i-ext"/></svg></div><div class="jr"><span class="stb"><svg class="lu"><use href="#i-check"/></svg></span><span class="when">10/12, 08:42 AM</span><span class="dur">0.84s</span><span class="pth"><svg class="lu"><use href="#i-code"/></svg>f/sales/sync_salesforce_leads</span><span class="trg">u/lea</span><svg class="lu ln2"><use href="#i-ext"/></svg></div><div class="sep">October 5, 2026</div><div class="jr wk"><span class="stb"><svg class="lu"><use href="#i-check"/></svg></span><span class="when">10/05, 09:00 AM</span><span class="dur">1.1s</span><span class="pth"><svg class="lu"><use href="#i-flow"/></svg>f/sales/weekly_sales_report</span><span class="trg"><svg class="lu"><use href="#i-cal"/></svg>f/sales/every_monday</span><svg class="lu ln2"><use href="#i-ext"/></svg></div></div>
+  </div>
+<script>const q = (s) => document.querySelector(s);
+  const mulberry = (a) => () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const plot = q("#plot"), PW = 584, PH = 150;
+  const X0 = Date.UTC(2026, 8, 12), X1 = Date.UTC(2026, 9, 14, 12), DAY = 864e5;
+  const px = (t) => ((t - X0) / (X1 - X0)) * PW;
+  const py = (ms) => PH - ((Math.log10(ms) - Math.log10(40)) / (Math.log10(60000) - Math.log10(40))) * (PH - 10) - 5;
+  [["Sep 14", Date.UTC(2026, 8, 14)], ["Sep 21", Date.UTC(2026, 8, 21)], ["Sep 28", Date.UTC(2026, 8, 28)], ["Oct 5", Date.UTC(2026, 9, 5)], ["Oct 12", Date.UTC(2026, 9, 12)]]
+    .forEach(([l, t]) => plot.insertAdjacentHTML("beforeend", `<span class="tk" style="left:${px(t) - 16}px;top:${PH + 4}px">${l}</span>`));
+  [["100", 100], ["1000", 1000], ["10000", 10000]].forEach(([l, v]) => plot.insertAdjacentHTML("beforeend", `<span class="tk" style="left:-34px;top:${py(v) - 7}px">${l}</span>`));
+  const rnd = mulberry(11);
+  for (let n = 0; n < 46; n++) {
+    const t = X0 + rnd() * (X1 - X0 - DAY * 0.6), ms = Math.pow(10, 2 + rnd() * 2.2);
+    plot.insertAdjacentHTML("beforeend", `<i class="pt bg${n % 9 === 4 ? " fail" : ""}" style="left:${px(t)}px;top:${py(ms)}px"></i>`);
+  }
+  [14, 21, 28, 35, 42].forEach((d, k) => plot.insertAdjacentHTML("beforeend", `<i class="pt wk" id="wk${k}" style="left:${px(Date.UTC(2026, 8, d) + 9 * 36e5)}px;top:${py([1180, 1050, 1260, 1100, 1200][k])}px"></i>`));
+
+</script>
+</div>
+<script src="../icons.js"></script>
+<script>
+  document.querySelectorAll("[data-icon]").forEach((el, n) => {
+    const svg = window.CLIP_ICONS?.[el.dataset.icon];
+    if (svg) el.innerHTML = svg.replace(/\bid="([^"]+)"/g, `id="$1-${n}"`).replace(/url\(#([^)]+)\)/g, `url(#$1-${n})`).replace(/href="#([^"]+)"/g, `href="#$1-${n}"`);
+  });
+  const fit = () => { const s = Math.min(innerWidth / 1280, innerHeight / 720); document.querySelector("#stage").style.transform = `scale(${s})`; };
+  addEventListener("resize", fit); fit();
+</script>

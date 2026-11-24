@@ -1,0 +1,38 @@
+{
+ "provider": "elevenlabs eleven_v4",
+ "cuts": [
+  {
+   "a": 0,
+   "b": 6.39521
+  },
+  {
+   "a": 6.84488,
+   "b": 12.5272
+  },
+  {
+   "a": 12.877,
+   "b": 18.3083
+  },
+  {
+   "a": 18.624000000000002,
+   "b": 22.5457
+  },
+  {
+   "a": 22.9157,
+   "b": 32.9346
+  },
+  {
+   "a": 33.2294,
+   "b": 37.661
+  }
+ ],
+ "gain": 4.399999999999999,
+ "lines": [
+  "Next to the chat, the preview panel shows what the session is working on, in tabs, without leaving the conversation.",
+  "When the AI writes a draft, it opens the editor here. Editor tabs end with edit.",
+  "Open an item's deployed page to run it with its form, and see its triggers and its versions.",
+  "Each run opens as its own tab, with its logs and its result.",
+  "The picker opens any page of the workspace: runs, schedules, variables, resources, or the compare page. Draft badges show what this session changed.",
+  "Open it in the workspace to leave the session, or go full screen when you need the room."
+ ]
+}

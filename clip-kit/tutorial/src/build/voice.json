@@ -1,0 +1,68 @@
+{
+ "provider": "elevenlabs eleven_v4",
+ "cuts": [
+  {
+   "a": 0,
+   "b": 10.8861
+  },
+  {
+   "a": 11.276200000000001,
+   "b": 13.4755
+  },
+  {
+   "a": 14.011600000000001,
+   "b": 22.0449
+  },
+  {
+   "a": 22.4911,
+   "b": 28.0075
+  },
+  {
+   "a": 28.4679,
+   "b": 37.49
+  },
+  {
+   "a": 37.964600000000004,
+   "b": 41.0488
+  },
+  {
+   "a": 41.4893,
+   "b": 48.6026
+  },
+  {
+   "a": 49.1045,
+   "b": 54.8153
+  },
+  {
+   "a": 55.225500000000004,
+   "b": 64.0361
+  },
+  {
+   "a": 64.4798,
+   "b": 70.49810000000001
+  },
+  {
+   "a": 70.895,
+   "b": 76.7941
+  },
+  {
+   "a": 77.1788,
+   "b": 82.5703
+  }
+ ],
+ "gain": 4.5,
+ "lines": [
+  "An AI session builds real Windmill items: scripts, flows, apps, AI agents and data pipelines. Each one is code you can read, and each one runs.",
+  "Ask for the whole job in one message.",
+  "First, the script. Windmill runs scripts in more than twenty languages, from TypeScript and Python to Go, SQL and Bash.",
+  "Here it's TypeScript: a main function, with the Stripe connection passed in as a typed resource.",
+  "Then the flow. Its graph shows each step, and each step points at a script. Open its code, and it's a YAML definition you can review or edit.",
+  "The schedule is a cron expression, and the flow it runs.",
+  "The app is a React project. Its preview runs live, next to the chat: the support team can already search the refunds.",
+  "Everything lands as a draft: saved on the server, visible only to you, and never run in production.",
+  "To test the flow, click Run. The open editor runs your draft: each step lights up as a worker executes it, and the result comes back in the chat.",
+  "The same session builds AI agents: a flow step that calls a model, with your own scripts as its tools.",
+  "And data pipelines, in alpha: scripts in one folder, chained by the data they read and write.",
+  "With AI sessions, you can build any internal software, and keep all of it in one workspace."
+ ]
+}

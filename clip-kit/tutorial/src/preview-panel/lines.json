@@ -1,0 +1,6 @@
+["Next to the chat, the preview panel shows what the session is working on, in tabs, without leaving the conversation.",
+ "When the AI writes a draft, it opens the editor here. Editor tabs end with edit.",
+ "Open an item's deployed page to run it with its form, and see its triggers and its versions.",
+ "Each run opens as its own tab, with its logs and its result.",
+ "The picker opens any page of the workspace: runs, schedules, variables, resources, or the compare page. Draft badges show what this session changed.",
+ "Open it in the workspace to leave the session, or go full screen when you need the room."]

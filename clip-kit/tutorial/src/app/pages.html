@@ -1,0 +1,58 @@
+        <div class="page" id="pSess">
+          <div class="hd"><span class="disc"><svg class="lu"><use href="#i-bld"/></svg></span>Acme<span class="sl">/</span><b id="sessName">New session</b></div>
+          <div class="chat" id="chat">
+            <div id="late" style="pointer-events:none;position:absolute;left:22px;right:22px;top:16px;display:flex;flex-direction:column;gap:10px">
+              <div class="um" id="um" style="opacity:0"></div>
+              <div class="trow" id="r0" style="opacity:0"><svg class="lu" style="color:#f97316"><use href="#i-app"/></svg>Saved app "f/finance/expenses" draft (react19)</div>
+              <div class="trow" id="r1" style="opacity:0"><svg class="lu" style="color:#f97316"><use href="#i-app"/></svg>Updated /App.tsx in app "f/finance/expenses"</div>
+              <div class="trow" id="r2" style="opacity:0"><svg class="lu" style="color:#f97316"><use href="#i-app"/></svg>Updated runnable "list_expenses" in app "f/finance/expenses"</div>
+              <div class="trow" id="r3" style="opacity:0"><svg class="lu" style="color:#f97316"><use href="#i-app"/></svg>Updated runnable "approve" in app "f/finance/expenses"</div>
+              <div class="trow" id="r4" style="opacity:0"><svg class="lu" style="color:#b91c1c"><use href="#i-alert"/></svg><span id="r4t">Reading app runtime logs...</span></div>
+              <div class="trow" id="r5" style="opacity:0"><svg class="lu" style="color:#f97316"><use href="#i-app"/></svg>Updated /App.tsx in app "f/finance/expenses"</div>
+            </div>
+            <div class="comp" id="comp"><span class="ph" id="ph">Ask anything...</span><span id="ptext"></span><span class="send" id="bSend"><svg class="lu"><use href="#i-up"/></svg></span></div>
+          </div>
+          <div class="pv" id="pv">
+            <div class="tabs"><span class="tab" id="tabT" style="opacity:0"><svg class="lu" style="color:#f97316"><use href="#i-app"/></svg>Expense approvals (edit)</span></div>
+            <div class="empty" id="pvEmpty"><svg class="lu"><use href="#i-msgs"/></svg><b>Nothing open yet</b><span>What the session builds opens here.</span></div>
+            <div class="rae" id="rae" style="opacity:0"><div class="rbar"><b>Expense approvals</b><span>f/finance/expenses</span><span class="dbadge" id="dB">Draft only</span><span class="sp"></span><span class="hb acc" id="bDep" style="height:28px"><svg class="lu"><use href="#i-save"/></svg>Deploy</span></div>
+              <div class="ftabs"><span id="ftApp">App.tsx</span><span>index.tsx</span><span class="bk" id="ftRun"><svg class="lu"><use href="#i-server"/></svg>approve</span><span class="sp"></span><span class="on pv2" id="pvTab"><svg class="lu"><use href="#i-eye"/></svg>Preview</span></div>
+              <div class="starter" id="starter">Hello from React 19</div>
+              <div class="appv" id="appv" style="opacity:0"><h3>Expense reports</h3><div class="flt"><span class="on">Pending</span><span>Approved</span><span>All</span></div>
+                <table><tr><th>Employee</th><th>Amount</th><th>Status</th><th></th></tr>
+                  <tr><td>Maya Lopez</td><td>$214.50</td><td><span class="st p" id="st1">Pending</span></td><td><span class="ab" id="ab1">Approve</span></td></tr>
+                  <tr><td>Tom Becker</td><td>$1,020.00</td><td><span class="st p">Pending</span></td><td><span class="ab">Approve</span></td></tr>
+                  <tr><td>Leo Park</td><td>$86.20</td><td><span class="st p">Pending</span></td><td><span class="ab">Approve</span></td></tr></table></div>
+              <div class="rcode" id="rcode" style="opacity:0"><div class="rh"><b>approve</b>· backend runnable · TypeScript · runs on a worker</div>
+                <div class="ed">
+                  <div class="l"><span class="n">1</span><span><span class="k">import</span> { Client } <span class="k">from</span> <span class="s">"pg"</span></span></div>
+                  <div class="l"><span class="n">2</span><span></span></div>
+                  <div class="l"><span class="n">3</span><span><span class="k">export async function</span> main(db: <span class="t">RT.Postgresql</span>, id: <span class="t">number</span>) {</span></div>
+                  <div class="l"><span class="n">4</span><span>  <span class="k">const</span> client = <span class="k">new</span> Client(db)</span></div>
+                  <div class="l"><span class="n">5</span><span>  <span class="k">await</span> client.connect()</span></div>
+                  <div class="l cQ"><span class="n">6</span><span>  <span class="k">await</span> client.query(</span></div>
+                  <div class="l cQ"><span class="n">7</span><span>    <span class="s">"update expenses set status = 'approved' where id = $1"</span>, [id])</span></div>
+                  <div class="l"><span class="n">8</span><span>  <span class="k">return</span> { id, status: <span class="s">"approved"</span> }</span></div>
+                  <div class="l"><span class="n">9</span><span>}</span></div>
+                </div>
+                <div class="sinp" id="sinp"><b><svg class="lu"><use href="#i-lock"/></svg>Static inputs</b>Set on the server; the page cannot override them.<code>db = <span>$res:f/finance/expenses_db</span></code></div></div>
+              <div class="bfail" id="bfail" style="opacity:0"><b><svg class="lu"><use href="#i-alert"/></svg>Build failed</b><pre>App.tsx:18:10  Cannot find name 'StatusBadge'.</pre></div>
+              <div class="ddrw" id="ddrw" style="opacity:0"><div class="dh">Deploy</div>
+                <label>Summary</label><div class="in2">Expense approvals</div>
+                <label>Deployment message</label><div class="in2 ph">Optional</div>
+                <div class="fb"><span class="btn">Diff</span><span class="btn acc" id="bDep2"><svg class="lu"><use href="#i-save"/></svg>Deploy</span></div></div>
+            </div>
+          </div>
+        </div>
+<!--CAM-->
+    <div class="dia" id="dCall"><div class="cap">A backend runnable call</div>
+      <div class="ccard" style="left:60px;top:200px"><h5><svg class="lu"><use href="#i-globe"/></svg>The page, in the browser</h5><small>App.tsx</small><pre><span class="k">import</span> { backend } <span class="k">from</span> <span class="s">'./wmill'</span>
+
+<span class="k">await</span> backend.approve({ id: 42 })</pre></div>
+      <div class="ccard" style="left:810px;top:200px"><h5><svg class="lu"><use href="#i-server"/></svg>A Windmill worker</h5><small>runs approve as a job</small><pre>db = <span class="s">$res:f/finance/expenses_db</span>
+id = 42</pre></div>
+      <svg class="dl" width="1200" height="630"><path d="M390 270 H 810" stroke="#cbd5e1" stroke-width="2" fill="none"/><path d="M810 360 H 390" stroke="#cbd5e1" stroke-width="2" fill="none" stroke-dasharray="5 5"/></svg>
+      <div class="lbl" id="lbA" style="left:520px;top:240px;opacity:0">job: approve({ id: 42 })</div>
+      <div class="lbl" id="lbB" style="left:500px;top:372px;opacity:0;color:#15803d">{ id: 42, status: "approved" }</div>
+      <div class="pkt" id="kA" style="left:400px;top:270px"></div><div class="pkt" id="kB" style="left:800px;top:360px;background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.2)"></div>
+    </div>

@@ -1,0 +1,149 @@
+/* clip-kit base: the stage, the opening, the header, and the Windmill UI pieces scenes
+   rebuild screens with. Colours are the app's light-theme tokens (brand guidelines). */
+:root {
+  --page: #f5f7fb;
+  --tint: #eef4ff;
+  --win: #ffffff;
+  --surface: #fbfbfd;
+  --surface-2: #efeff4;
+  --border: #e5e7eb;
+  --text: #3d4758;
+  --em: #1d2430;
+  --text-2: #718096;
+  --hint: #8d93a1;
+  --accent: #758ff8;
+  --accent-strong: #5074f6;
+  --sel-border: #a0affa;
+  --ok: #16a34a;
+  --bad: #dc2626;
+  --ai: #a02cde;
+  --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+body { margin: 0; background: var(--page); color: var(--text); font-family: var(--sans); }
+
+/* ---------- preview page around the stage (not filmed) ---------- */
+.ck-page { max-width: 1180px; margin: 0 auto; padding-block: 28px 44px; padding-inline: clamp(16px, 4vw, 40px); display: grid; gap: 14px; }
+.ck-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 20px; }
+.ck-head h1 { margin: 0; font-size: 16px; font-weight: 600; color: var(--em); }
+.ck-head span { font: 500 12px var(--mono); color: var(--hint); }
+.ck-frame { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; border: 1px solid #dde3ee; background: var(--tint); }
+.ck-controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.ck-controls input[type=range] { flex: 1 1 220px; margin: 0; height: 18px; background: transparent; appearance: none; -webkit-appearance: none; cursor: pointer; --p: 0%; }
+.ck-controls input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--accent-strong) var(--p), #d5dbe6 var(--p)); }
+.ck-controls input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--accent-strong) var(--p), #d5dbe6 var(--p)); }
+.ck-controls input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border-radius: 50%; background: var(--em); }
+.ck-controls input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--em); }
+.ck-btn { height: 36px; min-width: 36px; padding: 0 12px; display: inline-grid; place-items: center; border-radius: 8px; border: 1px solid #d5dbe6; background: #fff; color: var(--em); font: 600 13px var(--sans); cursor: pointer; white-space: nowrap; }
+.ck-btn svg { width: 16px; height: 16px; }
+.ck-btn[aria-pressed="true"] { background: #e8eeff; border-color: var(--sel-border); }
+.ck-btn:focus-visible, .ck-controls input:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 2px; }
+.ck-clock { font: 500 12px var(--mono); color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 480px) { .ck-clock { display: none; } }
+body.ck-capture { background: var(--tint); }
+body.ck-capture .ck-page { padding: 0; max-width: none; display: block; }
+body.ck-capture .ck-head, body.ck-capture .ck-controls { display: none; }
+body.ck-capture .ck-frame { width: 1280px; height: 720px; border: 0; border-radius: 0; aspect-ratio: auto; }
+
+/* ---------- stage (1280×720) ---------- */
+.ck-stage { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 0 0; overflow: hidden; background: radial-gradient(120% 90% at 50% 0%, #f3f7ff 0%, var(--tint) 55%, #e6eefc 100%); font-family: var(--sans); color: var(--text); }
+.ck-push { position: absolute; inset: 0; transform-origin: 640px 420px; }
+.ck-cam { position: absolute; inset: 0; transform-origin: 0 0; }
+.ck-hdr { position: absolute; left: 72px; top: 40px; width: 1136px; display: flex; justify-content: flex-end; }
+.ck-dock { width: 120px; height: 24px; }
+/* chapter cards: the dim sits over the screen, the captions over the dim */
+.ck-dim { position: absolute; inset: 0; z-index: 22; background: var(--tint); opacity: 0; pointer-events: none; }
+.ck-caps { position: absolute; inset: 0; z-index: 26; pointer-events: none; }
+.ck-cap { position: absolute; left: 0; right: 0; top: 0; display: flex; justify-content: center; align-items: center; gap: 22px; opacity: 0; font-size: 60px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; color: #0f172a; }
+.ck-num { width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--accent-strong); color: #fff; font-size: 0.6em; letter-spacing: 0; display: grid; place-items: center; flex: none; }
+.ck-ws { display: inline-flex; gap: 0.26em; }
+/* the opening line, written in full */
+.ck-hook { position: absolute; left: 0; right: 0; top: 360px; text-align: center; opacity: 0; font-size: 54px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.18; color: #0f172a; }
+.ck-hl { display: block; }
+.ck-mark { position: relative; display: inline-block; }
+.ck-ul { position: absolute; left: 0.02em; right: 0.02em; bottom: 0.02em; height: 0.09em; border-radius: 0.05em; background: var(--accent-strong); transform-origin: 0 50%; transform: scaleX(0); }
+/* the people the story follows: introduced big (k.meet), then a readable badge on screen */
+.ck-meet { position: absolute; left: 0; right: 0; top: 360px; display: flex; justify-content: center; gap: 110px; opacity: 0; }
+.ck-pp { display: grid; justify-items: center; gap: 8px; }
+.ck-av { width: 116px; height: 116px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 42px; font-weight: 600; letter-spacing: 0.01em; margin-bottom: 10px; flex: none; overflow: hidden; }
+.ck-av img { width: 100%; height: 100%; object-fit: cover; }
+/* a face reads at a bigger size than initials */
+.ck-meet .ck-av:has(img) { width: 176px; height: 176px; box-shadow: 0 0 0 5px #fff, 0 12px 32px rgba(15, 23, 42, 0.16); margin-bottom: 18px; }
+.ck-pn { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; color: #0f172a; }
+.ck-pr { font-size: 27px; font-weight: 500; color: #64748b; }
+.ck-who { display: inline-flex; align-items: center; gap: 14px; padding: 8px 22px 8px 8px; border-radius: 999px; background: #fff; box-shadow: 0 6px 24px rgba(15, 23, 42, 0.12); font-size: 26px; font-weight: 600; letter-spacing: -0.01em; color: #0f172a; white-space: nowrap; }
+.ck-who .ck-av { width: 48px; height: 48px; font-size: 18px; margin: 0; }
+.ck-who small { font-size: 21px; font-weight: 500; color: #64748b; }
+.ck-who-pin { position: absolute; left: 40px; top: 46px; opacity: 0; }
+.ck-w { display: inline-block; overflow: hidden; padding-bottom: 0.08em; }
+.ck-w > span { display: inline-block; }
+.ck-intro { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 45px; font-size: 85px; font-weight: 600; letter-spacing: -0.01em; color: #0f172a; transform-origin: 0 0; z-index: 25; }
+.ck-intro svg { width: 120px; height: 120px; overflow: visible; }
+.ck-intro .ck-wm { clip-path: inset(0 100% 0 0); line-height: 1; padding-bottom: 6px; }
+.ck-cursor { position: absolute; left: 0; top: 0; width: 26px; height: 26px; z-index: 20; opacity: 0; }
+.ck-cursor svg { position: absolute; left: 0; top: 0; width: 26px; height: 26px; filter: drop-shadow(0 2px 3px rgba(15, 23, 42, .3)); transform-origin: 4px 3px; }
+.ck-ripple { position: absolute; left: -15px; top: -16px; width: 36px; height: 36px; border-radius: 50%; background: rgba(80, 116, 246, .35); opacity: 0; }
+.ck-veil { position: absolute; inset: 0; background: var(--tint); opacity: 0; z-index: 30; pointer-events: none; }
+/* pre-wrap keeps typed spaces (one key each) and still lets a long line wrap */
+.ck-typed { white-space: pre-wrap; }
+.ck-typed span { display: none; }
+/* <i data-icon="slack"></i>: a product icon, sized by font-size like the app's 16 px icons. */
+.ck-icon { display: inline-block; flex: none; width: 1em; height: 1em; font-size: 16px; line-height: 0; vertical-align: -0.2em; }
+.ck-icon > svg, .ck-icon > div { display: block; }
+.ck-caret { display: inline-block; width: 1.5px; height: 19px; background: var(--em); opacity: 0; margin-left: 1px; vertical-align: middle; }
+
+/* ---------- the app window (the scene's #screen goes in here) ---------- */
+.win { position: absolute; left: 72px; top: 170px; width: 1136px; height: 620px; background: var(--win); border: 1px solid #dde3ee; border-radius: 16px; box-shadow: 0 34px 70px -28px rgba(30, 47, 96, .32), 0 6px 18px -8px rgba(30, 47, 96, .12); overflow: hidden; }
+.bar { height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px 0 22px; border-bottom: 1px solid var(--border); }
+.crumb { font: 500 12px var(--mono); color: var(--text-2); }
+.btitle { font-size: 15px; font-weight: 600; color: var(--em); margin-top: 3px; }
+
+/* ---------- Windmill UI pieces ---------- */
+.lab { font-size: 14.5px; font-weight: 600; color: var(--em); display: flex; align-items: center; gap: 6px; }
+.lab .info { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--hint); color: var(--hint); font-size: 10px; font-weight: 700; display: grid; place-items: center; }
+.lab .req { color: #dc2626; }
+.mini { font-size: 12.5px; font-weight: 600; color: var(--em); margin-bottom: 5px; }
+.mini span, .hint { font-weight: 400; font-size: 13px; color: var(--text-2); }
+.field { display: grid; gap: 8px; }
+.inp { position: relative; height: 40px; border: 1px solid #d6dae2; border-radius: 8px; background: #fff; display: flex; align-items: center; padding: 0 12px; font-size: 15px; color: var(--em); gap: 2px; white-space: nowrap; }
+.inp .pre, .inp .ph { color: #a8b0bd; }
+.inp .ph { position: absolute; left: 13px; }
+.inp.sm { height: 34px; font-size: 14px; }
+.code { font: 500 13px/1.5 var(--mono); }
+.seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--surface-2); border-radius: 8px; }
+.seg span { padding: 7px 12px; font-size: 13.5px; font-weight: 500; color: var(--text-2); border-radius: 6px; white-space: nowrap; }
+.seg span.on { background: #fff; color: var(--em); box-shadow: 0 1px 2px rgba(15, 23, 42, .12); font-weight: 600; }
+.tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--border); position: relative; }
+.tabs span { padding: 10px 0 9px; font-size: 13.5px; font-weight: 500; color: var(--text-2); }
+.tabs span.on { color: var(--em); font-weight: 600; box-shadow: inset 0 -2px 0 var(--em); }
+.btn { position: relative; height: 34px; padding: 0 14px; border-radius: 7px; font-size: 13.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; color: #fff; background: var(--accent); }
+.btn.strong { background: var(--accent-strong); }
+.btn.dark { background: #2e3a63; }
+.btn.ghost { background: #fff; color: var(--em); border: 1px solid #cfd5e3; }
+.btn svg { width: 14px; height: 14px; }
+.spin { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .45); border-top-color: #fff; }
+.spin.dark { border-color: #d6dae2; border-top-color: var(--accent-strong); }
+.tog { position: relative; width: 40px; height: 22px; border-radius: 11px; background: #d1d5db; flex: none; }
+.tog i { position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .25); }
+.card { border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 14px; }
+.chip { display: inline-flex; align-items: center; font-size: 12.5px; font-weight: 600; color: #4b5bd6; background: #e6eaff; padding: 5px 9px; border-radius: 6px; white-space: nowrap; }
+.pill-ok { font-size: 13.5px; font-weight: 700; color: #15803d; background: #dcfce7; padding: 3px 10px; border-radius: 999px; }
+.status { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+.status.ok { color: var(--ok); }
+.status.bad { color: var(--bad); }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 16%, transparent); }
+
+/* flow editor */
+.canvas { position: relative; overflow: hidden; background-color: #f7f8fb; background-image: radial-gradient(circle, #dde2eb 1px, transparent 1.3px); background-size: 18px 18px; }
+.glines { position: absolute; left: 0; top: 0; overflow: visible; }
+.glines path { fill: none; stroke: #b9c0cf; stroke-width: 1.3; }
+.node { position: absolute; width: 240px; height: 38px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 500; color: var(--em); border: 1px solid transparent; }
+.node.io { background: #dfe4f5; }
+.node.st { background: #fff; border-color: #e1e5ee; box-shadow: 0 1px 2px rgba(15, 23, 42, .06); }
+.node .ico { position: absolute; left: 12px; top: 50%; width: 17px; height: 17px; margin-top: -8.5px; }
+.node .bid { position: absolute; right: 9px; top: 50%; margin-top: -10px; height: 20px; min-width: 20px; padding: 0 5px; border-radius: 5px; background: #e3e8f8; font-size: 11.5px; font-weight: 600; color: #4b5d9a; display: grid; place-items: center; }
+.plus { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: #fff; border: 1px solid #c4cad8; display: grid; place-items: center; color: #5b6477; }
+.plus svg { width: 10px; height: 10px; }
+.menu { position: absolute; width: 250px; background: #fff; border: 1px solid #e1e5ee; border-radius: 10px; box-shadow: 0 18px 40px -12px rgba(15, 23, 42, .28); padding: 8px; transform-origin: 50% 0; z-index: 3; }
+.menu .it { height: 29px; display: flex; align-items: center; gap: 9px; padding: 0 9px; border-radius: 6px; font-size: 13.5px; color: var(--em); }
+.menu .it svg { width: 15px; height: 15px; color: #5b6477; flex: none; }

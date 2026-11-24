@@ -1,0 +1,110 @@
+<!doctype html>
+<title>Flow graph with a run</title>
+<meta charset="utf-8">
+<!-- Flow editor graph (nodes, edges) plus run panels beside each step. Source: lib/components/graph/ (node 275x34, radius 6, Input/Result #dce0f1, edges #b1b1b7, canvas #efeff4). The run panels are a clip device, not app UI. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root { --bg: #eef4ff; --ink: #111827; --text: #374151; --muted: #9ca3af; --line: #ececea; --edge: #e3e7ef; --blue: #3b82f6; --blue2: #2c5beb; --soft: #eef3fe; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #dde5f3; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1280px; height: 720px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
+    .abs { position: absolute; }
+  .ico { display: inline-grid; place-items: center; width: 18px; height: 18px; flex: none; }
+  .ico svg { width: 100%; height: 100%; }
+  .lu { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .float { position: absolute; background: #fff; border: 1px solid var(--edge); box-shadow: 0 1px 2px rgba(17,24,39,.04), 0 24px 48px -24px rgba(29,36,48,.28); }
+  .ok { width: 16px; height: 16px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; flex: none; }
+  .ok::after { content: ""; width: 7px; height: 3.5px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); }
+
+  /* the workflow, drawn as the flow editor draws it */
+  #G { position: absolute; left: 0; top: 0; width: 1280px; height: 720px; transform-origin: 895px 360px; }
+  .gz { position: absolute; left: 702.5px; top: 159.8px; transform: scale(1.4); transform-origin: 0 0; }
+  .gn { position: absolute; width: 275px; height: 34px; border-radius: 6px; background: #fff; box-shadow: 0 1px 2px rgba(17,24,39,.06), 0 10px 22px -12px rgba(29,36,48,.3); display: flex; align-items: center; justify-content: space-between; padding: 8px; font-size: 11.2px; color: #1d2430; }
+  .gn.virt { background: #dce0f1; justify-content: center; }
+  .gn .lbl { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  .gn .bid { background: #dce0f1; border-radius: 6px; padding: 2px 4px; font-size: 11.2px; line-height: 1; }
+  .gn .ok { position: absolute; right: -24px; top: 9px; }
+  .gn.glow { box-shadow: 0 0 0 2px rgba(59,130,246,.55), 0 10px 22px -12px rgba(29,36,48,.3); }
+  svg.gedges { position: absolute; left: 0; top: 0; overflow: visible; }
+  .gdot { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: var(--blue2); box-shadow: 0 0 0 3px rgba(59,130,246,.22); }
+
+  /* the run panels */
+  .run { left: 665px; width: 400px; border-radius: 12px; padding: 12px 16px; overflow: hidden; }
+  .run .rh { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .run .mono { margin-top: 10px; font: 400 14px 'JetBrains Mono', monospace; color: var(--ink); }
+  .run .th { margin-top: 9px; font-size: 15px; color: var(--text); }
+  .run .tool { margin-top: 10px; display: flex; align-items: center; gap: 8px; font: 500 13.5px 'JetBrains Mono', monospace; color: var(--ink); }
+  .run .out { margin-top: 9px; font-size: 16px; font-weight: 500; color: var(--ink); }
+
+  /* the state shown: the run done, panels open beside their steps */
+  #G { transform: translateX(-480px); } .gn .ok { opacity: 1 !important; } .gdot { display: none; } #e1, #e2 { stroke: #3b82f6; stroke-width: 1.6; }
+
+</style>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 6h11"/><path d="M8 12h13"/><path d="M3 18h11"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="i-boxes" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="13" rx="1"/><rect width="8" height="8" x="13" y="13" rx="1"/><rect width="8" height="8" x="8" y="3" rx="1"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 18V6a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v2"/><path d="M3 18l3-8h16l-3 8a2 2 0 0 1-2 1.5H5A2 2 0 0 1 3 18z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-4-6.3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-bld" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+  <symbol id="mark" viewBox="0 0 256 256"><polygon fill="#3B82F6" points="227.55,69.75 186.61,69.75 101.33,69.75 129.78,119.02 158.16,119.02 228.61,119.02 256,119.02"/><polygon fill="#3B82F6" points="136.93,132.47 116.46,167.93 73.82,241.78 130.71,241.78 144.9,217.2 180.13,156.18 193.82,132.46"/><polygon fill="#3B82F6" points="121.7,131.95 101.23,96.49 58.59,22.63 30.15,71.91 44.34,96.49 79.57,157.5 93.26,181.22"/><polygon fill="#BCD4FC" points="134.78,14.22 114.31,48.21 101.33,69.75 158.22,69.75 177.97,36.95 191.67,14.22"/><polygon fill="#BCD4FC" points="64.81,131.95 25.15,131.21 0,130.74 28.44,180.01 66.73,180.72 93.26,181.21"/><polygon fill="#BCD4FC" points="165.38,181.74 184.58,216.46 196.75,238.47 225.19,189.2 206.66,155.69 193.83,132.46"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-ccheck" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-calert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-cplay" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></symbol>
+  <symbol id="i-msgs" viewBox="0 0 24 24"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-at" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/></symbol>
+</svg>
+<div id="stage">
+  <!-- the workflow -->
+  <div id="G">
+    <div class="gz">
+      <svg class="gedges" width="275" height="300">
+        <path id="e1" d="M137.5 64 V 126" stroke="#b1b1b7" stroke-width="1" fill="none"/>
+        <path id="e2" d="M137.5 160 V 222" stroke="#b1b1b7" stroke-width="1" fill="none"/>
+      </svg>
+      <div class="gn virt" id="nIn" style="left:0;top:30px"><span class="lbl">Input</span><span class="ok" style="opacity:0"></span></div>
+      <div class="gn" id="nAg" style="left:0;top:126px"><svg class="lu" style="color:#a02cde"><use href="#i-bot"/></svg><span class="lbl">Order assistant</span><span class="bid">a</span><span class="ok" style="opacity:0"></span></div>
+      <div class="gn" id="nRe" style="left:0;top:222px"><span class="ico" data-icon="zendesk" style="width:16px;height:16px"></span><span class="lbl">Reply on Zendesk</span><span class="bid">b</span><span class="ok" style="opacity:0"></span></div>
+      <i class="gdot" id="gd" style="left:137.5px;top:47px"></i>
+    </div>
+  </div>
+
+  <!-- what the run shows beside each step -->
+  <div class="float run" id="pIn" style="top:190px;height:72px"><div class="rh">Input</div><div class="mono">message: "Where is my order?"</div></div>
+  <div class="float run" id="pAg" style="top:310px;height:100px"><div class="rh"><svg class="lu" style="color:#a02cde;width:14px;height:14px"><use href="#i-bot"/></svg>Order assistant</div>
+    <div class="th" id="th">Wants a delivery date. Look the order up.</div>
+    <div class="tool" id="tool"><span style="position:relative;width:16px;height:16px;display:grid;place-items:center"><span class="spin" id="tspin" style="position:absolute"></span><span class="ok" id="tok" style="position:absolute;opacity:0"></span></span>look_up_order("4821")<span class="ico" data-icon="shopify" style="width:15px;height:15px;margin-left:2px"></span></div></div>
+  <div class="float run" id="pOut" style="top:456px;height:76px"><div class="rh">Output</div><div class="out">Shipped with UPS. Arrives on Friday.</div></div>
+
+
+</div>
+<script src="../icons.js"></script>
+<script>
+  document.querySelectorAll("[data-icon]").forEach((el, n) => {
+    const svg = window.CLIP_ICONS?.[el.dataset.icon];
+    if (svg) el.innerHTML = svg.replace(/\bid="([^"]+)"/g, `id="$1-${n}"`).replace(/url\(#([^)]+)\)/g, `url(#$1-${n})`).replace(/href="#([^"]+)"/g, `href="#$1-${n}"`);
+  });
+  const fit = () => { const s = Math.min(innerWidth / 1280, innerHeight / 720); document.querySelector("#stage").style.transform = `scale(${s})`; };
+  addEventListener("resize", fit); fit();
+</script>

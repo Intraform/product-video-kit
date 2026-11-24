@@ -1,0 +1,43 @@
+{
+ "provider": "elevenlabs eleven_v4",
+ "cuts": [
+  {
+   "a": 0,
+   "b": 9.34425
+  },
+  {
+   "a": 9.765600000000001,
+   "b": 15.889000000000001
+  },
+  {
+   "a": 16.2549,
+   "b": 19.9146
+  },
+  {
+   "a": 20.3444,
+   "b": 31.5282
+  },
+  {
+   "a": 31.9071,
+   "b": 39.019800000000004
+  },
+  {
+   "a": 39.473800000000004,
+   "b": 44.8738
+  },
+  {
+   "a": 45.248400000000004,
+   "b": 51.3517
+  }
+ ],
+ "gain": 4.399999999999999,
+ "lines": [
+  "A full-code app in Windmill is a React or Svelte project with backend runnables, deployed like any other item. An AI session builds one from a description.",
+  "Describe the app you need. The AI creates it as a draft, and opens it in the preview, next to the chat.",
+  "It writes the frontend files, and the backend runnables the page calls.",
+  "A backend runnable is code that runs on a Windmill worker, not in the browser. Here, approve marks an expense as approved in Postgres, through a database resource the browser never sees.",
+  "The page calls it like a function: backend dot approve. Windmill runs it as a job, and sends the result back to the page.",
+  "When a build fails, the AI reads the build logs itself, and fixes the code in the same turn.",
+  "Try it in the preview, then deploy it from the editor's header. The draft becomes a real app in your workspace."
+ ]
+}

@@ -1,0 +1,4 @@
+["Workspace admins decide how AI sessions behave for everyone, in the workspace settings, under Windmill AI.",
+ "Custom system prompts add your team's rules to every session: the libraries to use, the folders to write in, the channels to post to.",
+ "Backups keep sessions in the workspace storage, encrypted. Retention deletes them after the number of days you choose.",
+ "Hide AI sessions removes them, and every AI button, for all members. AI steps in flows keep working."]

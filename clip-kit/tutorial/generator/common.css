@@ -1,0 +1,56 @@
+  /* shared by the technical tutorials: tool rows, preview chips, code views, diagrams, terminal */
+  .trow { position: absolute; left: 22px; right: 22px; height: 28px; display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--text); white-space: nowrap; }
+  .trow .lu { width: 14px; height: 14px; }
+  .trow .sp { flex: 1; }
+  .trow code { font: 500 11.5px 'JetBrains Mono', monospace; color: var(--ink); }
+  .trow .ico { width: 15px; height: 15px; }
+  .pchip { display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 11.5px; font-weight: 500; color: var(--text); }
+  .pchip .lu { width: 12px; height: 12px; }
+  .pchip .pen { color: var(--hint); }
+  .params { position: absolute; left: 22px; right: 22px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fafbfc; font: 400 11.5px/1.65 'JetBrains Mono', monospace; color: #475569; white-space: pre; }
+  .params b { color: #2c5beb; font-weight: 400; }
+  .empty { position: absolute; inset: 36px 0 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+  .empty .lu { width: 28px; height: 28px; color: #505c70; }
+  .empty b { font-size: 13.5px; font-weight: 500; color: var(--sec); }
+  .empty span { font-size: 12px; color: #505c70; max-width: 300px; }
+  .pv .tab.off { background: transparent; border-color: transparent; color: var(--sec); }
+  .pv .tabs { gap: 2px; }
+  .view { position: absolute; inset: 36px 0 0 0; background: #fff; overflow: hidden; }
+  .edh { height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--sec); }
+  .edh b { font-weight: 600; color: var(--ink); }
+  .edh .sp { flex: 1; }
+  .seg { display: flex; padding: 2px; gap: 2px; border-radius: 6px; background: #e8e8ef; }
+  .seg span { height: 24px; display: grid; place-items: center; padding: 0 10px; border-radius: 5px; font-size: 11.5px; color: var(--text); border: 1px solid transparent; }
+  .seg span.on { background: #fff; border-color: rgba(156,163,175,.3); color: var(--ink); font-weight: 500; }
+  .ed { padding: 14px 0; font: 400 12.5px/1.8 'JetBrains Mono', monospace; color: #334155; }
+  .ed .l { display: flex; padding-right: 14px; white-space: pre; border-radius: 3px; }
+  .ed .n { width: 42px; text-align: right; padding-right: 14px; color: #b4bac5; flex: none; }
+  .ed .k { color: #2c5beb; } .ed .s { color: #16794a; } .ed .c { color: #94a3b8; } .ed .t { color: #b45309; }
+  .ed .add { background: #e9f9ee; } .ed .add .n { color: #22a35a; }
+  .ed .del { background: #fdecec; } .ed .del .n { color: #dc2626; }
+  .fields { padding: 18px 22px; }
+  .fields .f { display: flex; align-items: baseline; gap: 14px; padding: 10px 0; border-bottom: 1px solid #f1f2f5; font-size: 12.5px; color: var(--text); }
+  .fields .f span:first-child { width: 110px; font-weight: 600; color: var(--ink); }
+  .fields code { font: 500 13px 'JetBrains Mono', monospace; color: var(--ink); }
+  .files { position: absolute; left: 0; top: 36px; bottom: 0; width: 170px; border-right: 1px solid var(--line); padding: 12px 8px; font-size: 12px; color: var(--text); }
+  .files div { height: 26px; display: flex; align-items: center; gap: 7px; padding: 0 8px; border-radius: 5px; }
+  .files div.on { background: #eef3fe; color: var(--ink); font-weight: 500; }
+  .files .h { font-size: 10.5px; font-weight: 600; letter-spacing: .05em; color: var(--hint); text-transform: uppercase; }
+  .files .lu { width: 13px; height: 13px; color: var(--hint); }
+  /* diagrams: a card the size of the window, in Windmill's colours */
+  .dia { position: absolute; left: 40px; top: 56px; width: 1200px; height: 630px; border-radius: 12px; background: #fbfcff; border: 1px solid #e3e7ef; box-shadow: 0 30px 60px -30px rgba(29,36,48,.35); opacity: 0; overflow: hidden; z-index: 5; }
+  .dia .cap { position: absolute; left: 36px; top: 28px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--hint); }
+  .box { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border-radius: 12px; background: #fff; border: 1px solid #e3e7ef; box-shadow: 0 10px 30px -18px rgba(29,36,48,.35); font-size: 16px; font-weight: 600; color: var(--ink); text-align: center; }
+  .box small { font-size: 12.5px; font-weight: 400; color: var(--sec); line-height: 1.4; }
+  .box .lu { width: 20px; height: 20px; }
+  .box.indigo { border-color: #c7d2fe; background: #f5f7ff; } .box.green { border-color: #bbf7d0; background: #f3fdf6; } .box.blue { border-color: #bcd4fc; background: #f5f9ff; }
+  .dl { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .lbl { position: absolute; font-size: 12.5px; font-weight: 600; color: var(--blue2); white-space: nowrap; }
+  .pkt { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--blue2); box-shadow: 0 0 0 5px rgba(59,130,246,.2); opacity: 0; }
+  /* a terminal */
+  .term { position: absolute; left: 240px; top: 150px; width: 800px; height: 420px; border-radius: 12px; background: #111827; box-shadow: 0 30px 60px -24px rgba(17,24,39,.6); opacity: 0; z-index: 6; overflow: hidden; }
+  .term .tb { height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px; background: #1f2937; }
+  .term .tb i { width: 11px; height: 11px; border-radius: 50%; background: #374151; }
+  .term .tb span { margin-left: 8px; font-size: 12px; color: #9ca3af; }
+  .term pre { padding: 18px 22px; font: 400 15px/1.75 'JetBrains Mono', monospace; color: #e5e7eb; white-space: pre; }
+  .term .p { color: #60a5fa; } .term .g { color: #4ade80; } .term .d { color: #6b7280; }

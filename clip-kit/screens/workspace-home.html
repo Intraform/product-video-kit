@@ -1,0 +1,118 @@
+<!doctype html>
+<title>Workspace home</title>
+<meta charset="utf-8">
+<!-- Workspace home (Home), light. Source: frontend/src/routes/(root)/(logged)/+page.svelte, lib/components/home/ItemsList.svelte, Item.svelte, common/table/Row.svelte, RowIcon.svelte; sidebar in routes/(root)/(logged)/+layout.svelte, SessionModeSwitch.svelte. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root { --bg: #eef4ff; --ink: #111827; --text: #374151; --muted: #9ca3af; --line: #ececea; --edge: #e3e7ef; --blue: #3b82f6; --blue2: #2c5beb; --soft: #eef3fe; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #dde5f3; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1280px; height: 720px; overflow: hidden; background: var(--bg); transform-origin: 0 0; }
+    .abs { position: absolute; }
+  .ico { display: inline-grid; place-items: center; width: 18px; height: 18px; flex: none; }
+  .ico svg { width: 100%; height: 100%; }
+  .lu { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .float { position: absolute; background: #fff; border: 1px solid var(--edge); box-shadow: 0 1px 2px rgba(17,24,39,.04), 0 24px 48px -24px rgba(29,36,48,.28); }
+  .ok { width: 16px; height: 16px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; flex: none; }
+  .ok::after { content: ""; width: 7px; height: 3.5px; border: solid #fff; border-width: 0 0 2px 2px; transform: rotate(-45deg) translate(1px, -1px); }
+
+  /* the workspace home, as the app draws it */
+  #ws { position: absolute; left: 140px; top: 130px; width: 1000px; height: 560px; border-radius: 12px; overflow: hidden; display: flex; background: #fbfbfd; border: 1px solid #e3e7ef; box-shadow: 0 30px 60px -30px rgba(29,36,48,.35); transform-origin: 595px 347px; }
+  #ws .lu { width: 15px; height: 15px; }
+  #ws .side { width: 190px; flex: none; background: #f3f3f7; box-shadow: inset -1px 0 #e5e7eb; padding: 10px 8px; display: flex; flex-direction: column; gap: 2px; }
+  #ws .nv { height: 30px; display: flex; align-items: center; gap: 9px; padding: 0 8px; border-radius: 6px; font-size: 12px; color: #718096; }
+  #ws .nv .lu { color: #8d93a1; }
+  #ws .nv.on { background: #e8e8f0; color: #1d2430; font-weight: 600; }
+  #ws .nv.on .lu { color: #1d2430; }
+  #ws .sec { padding: 14px 8px 4px; font-size: 8px; letter-spacing: .06em; color: #718096; }
+  #ws .foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 0 8px 6px; font-size: 12px; font-weight: 600; color: #1d2430; }
+  #ws .main { flex: 1; min-width: 0; }
+  #ws .hd { height: 44px; display: flex; align-items: center; gap: 7px; padding: 0 14px; font-size: 12px; color: #718096; }
+  #ws .hd .disc { width: 20px; height: 20px; border-radius: 50%; background: #e8e8ef; display: grid; place-items: center; color: #505c70; }
+  #ws .hd .disc .lu { width: 13px; height: 13px; }
+  #ws .hd .sl { color: rgba(141,147,161,.4); margin: 0 3px; }
+  #ws .hd b { font-weight: 500; color: #1d2430; }
+  #ws .tb { display: flex; align-items: center; gap: 10px; padding: 24px 24px 0; }
+  #ws .tb .sp { flex: 1; }
+  #ws .tgs { display: flex; gap: 2px; padding: 2px; border-radius: 7px; background: #e8e8ef; }
+  #ws .tg { height: 30px; display: flex; align-items: center; gap: 7px; padding: 0 14px; border-radius: 6px; border: 1px solid transparent; font-size: 12px; color: #3d4758; }
+  #ws .tg .lu { width: 14px; height: 14px; }
+  #ws .tg.on { background: #fff; border-color: rgba(156,163,175,.3); }
+  #ws .tg.on.k-script .lu { color: #3b82f6; } #ws .tg.on.k-flow .lu { color: #14b8a6; } #ws .tg.on.k-app .lu { color: #fb923c; } #ws .tg.on.k-agent .lu { color: #8b5cf6; }
+  #ws .srch { width: 210px; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px 0 12px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; font-size: 12px; color: #8d93a1; }
+  #ws .new { height: 30px; display: flex; align-items: center; gap: 6px; padding: 0 12px; border-radius: 6px; background: #758ff8; color: #fff; font-size: 12px; font-weight: 500; }
+  #ws .new .lu { width: 13px; height: 13px; }
+  #ws .list { margin: 14px 24px 0; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; overflow: hidden; }
+  #ws .wrow { height: 52px; display: flex; align-items: center; gap: 16px; padding: 0 12px 0 16px; border-bottom: 1px solid #e5e7eb; }
+  #ws .wrow:last-child { border-bottom: 0; }
+  #ws .wrow .ki { width: 16px; height: 16px; }
+  #ws .wrow.w-script .ki { color: #3b82f6; } #ws .wrow.w-flow .ki { color: #14b8a6; } #ws .wrow.w-app .ki { color: #f97316; } #ws .wrow.w-agent .ki { color: #8b5cf6; }
+  #ws .wrow .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  #ws .wrow .tx b { font-size: 12.5px; font-weight: 600; color: #1d2430; }
+  #ws .wrow .tx span { font-size: 10.5px; color: #8d93a1; }
+  #ws .wrow .lg { width: 16px; height: 16px; }
+  #ws .wrow .stc { width: 36px; display: grid; place-items: center; }
+  #ws .wrow .st { color: #8d93a1; opacity: .6; }
+  #ws .wrow .ed { width: 80px; height: 30px; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; font-weight: 500; color: #3d4758; }
+  #ws .wrow .ed .lu { width: 13px; height: 13px; }
+  #ws .wrow .dt { color: #8d93a1; }
+  #ws .sw { display: flex; padding: 2px; margin: 0 0 8px; border-radius: 7px; background: #e8e8ef; }
+  #ws .sw span { flex: 1; height: 26px; display: grid; place-items: center; border-radius: 5px; font-size: 11.5px; color: #3d4758; border: 1px solid transparent; }
+  #ws .sw span.on { background: #fff; border-color: rgba(156,163,175,.3); color: #1d2430; }
+
+</style>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 24 24"><path d="M3 6h11"/><path d="M8 12h13"/><path d="M3 18h11"/></symbol>
+  <symbol id="i-app" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="i-boxes" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="13" rx="1"/><rect width="8" height="8" x="13" y="13" rx="1"/><rect width="8" height="8" x="8" y="3" rx="1"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 18V6a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v2"/><path d="M3 18l3-8h16l-3 8a2 2 0 0 1-2 1.5H5A2 2 0 0 1 3 18z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 4a4 4 0 0 1 0 8"/><path d="M22 21a7 7 0 0 0-4-6.3"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-bld" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+  <symbol id="mark" viewBox="0 0 256 256"><polygon fill="#3B82F6" points="227.55,69.75 186.61,69.75 101.33,69.75 129.78,119.02 158.16,119.02 228.61,119.02 256,119.02"/><polygon fill="#3B82F6" points="136.93,132.47 116.46,167.93 73.82,241.78 130.71,241.78 144.9,217.2 180.13,156.18 193.82,132.46"/><polygon fill="#3B82F6" points="121.7,131.95 101.23,96.49 58.59,22.63 30.15,71.91 44.34,96.49 79.57,157.5 93.26,181.22"/><polygon fill="#BCD4FC" points="134.78,14.22 114.31,48.21 101.33,69.75 158.22,69.75 177.97,36.95 191.67,14.22"/><polygon fill="#BCD4FC" points="64.81,131.95 25.15,131.21 0,130.74 28.44,180.01 66.73,180.72 93.26,181.21"/><polygon fill="#BCD4FC" points="165.38,181.74 184.58,216.46 196.75,238.47 225.19,189.2 206.66,155.69 193.83,132.46"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></symbol>
+  <symbol id="i-ccheck" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-calert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+  <symbol id="i-cplay" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></symbol>
+  <symbol id="i-msgs" viewBox="0 0 24 24"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-at" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.4l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-max" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="m21 3-7 7"/><path d="m3 21 7-7"/></symbol>
+</svg>
+<div id="stage">
+<div id="ws">
+    <div class="side"><div class="sw"><span class="on">Workspace</span><span>AI Sessions</span></div><div class="nv on"><svg class="lu"><use href="#i-home"/></svg>Home</div><div class="nv"><svg class="lu"><use href="#i-play"/></svg>Runs</div><div class="nv"><svg class="lu"><use href="#i-star"/></svg>Favorites</div><div class="nv"><svg class="lu"><use href="#i-search"/></svg>Search</div><div style="height:10px"></div><div class="nv"><svg class="lu"><use href="#i-dollar"/></svg>Variables</div><div class="nv"><svg class="lu"><use href="#i-boxes"/></svg>Resources</div><div class="nv"><svg class="lu"><use href="#i-folder"/></svg>Folders</div><div class="nv"><svg class="lu"><use href="#i-users"/></svg>Groups</div><div class="sec">TRIGGERS</div><div class="nv"><svg class="lu"><use href="#i-cal"/></svg>Schedules</div><div class="foot"><svg viewBox="0 0 256 256" style="width:15px;height:15px"><use href="#mark"/></svg>Windmill</div></div>
+    <div class="main">
+      <div class="hd"><span class="disc"><svg class="lu"><use href="#i-bld"/></svg></span><span class="wsn">Support</span><svg class="lu" style="width:13px;height:13px;color:#8d93a1"><use href="#i-chev"/></svg><span class="sl">/</span><svg class="lu" style="width:13px;height:13px;color:#505c70"><use href="#i-home"/></svg><b>Home</b></div>
+      <div class="tb"><div class="tgs"><span class="tg k-all on" id="tg-all">All</span><span class="tg k-script" id="tg-script"><svg class="lu"><use href="#i-code"/></svg>Scripts</span><span class="tg k-flow" id="tg-flow"><svg class="lu"><use href="#i-flow"/></svg>Flows</span><span class="tg k-app" id="tg-app"><svg class="lu"><use href="#i-app"/></svg>Apps</span><span class="tg k-agent" id="tg-agent"><svg class="lu"><use href="#i-bot"/></svg>Agents</span></div><span class="sp"></span><span class="srch">Search Scripts, Flows &amp; Apps<svg class="lu"><use href="#i-search"/></svg></span><span class="new"><svg class="lu"><use href="#i-plus"/></svg>New<svg class="lu"><use href="#i-chev"/></svg></span></div>
+      <div class="list"><div class="wrow w-agent"><svg class="lu ki"><use href="#i-bot"/></svg><div class="tx"><b>Answers questions about orders</b><span>f/support/order_assistant</span></div><span class="stc"></span><span class="ed"><svg class="lu"><use href="#i-pen"/></svg>Edit</span><svg class="lu dt"><use href="#i-dots"/></svg></div><div class="wrow w-script"><svg class="lu ki"><use href="#i-code"/></svg><div class="tx"><b>Look up an order</b><span>f/support/look_up_order</span></div><span class="ico lg" data-icon="lang:bun"></span><span class="stc"><svg class="lu st"><use href="#i-star"/></svg></span><span class="ed"><svg class="lu"><use href="#i-pen"/></svg>Edit</span><svg class="lu dt"><use href="#i-dots"/></svg></div><div class="wrow w-script"><svg class="lu ki"><use href="#i-code"/></svg><div class="tx"><b>Issue a refund</b><span>f/support/issue_refund</span></div><span class="ico lg" data-icon="lang:python3"></span><span class="stc"><svg class="lu st"><use href="#i-star"/></svg></span><span class="ed"><svg class="lu"><use href="#i-pen"/></svg>Edit</span><svg class="lu dt"><use href="#i-dots"/></svg></div><div class="wrow w-flow"><svg class="lu ki"><use href="#i-flow"/></svg><div class="tx"><b>Support flow</b><span>f/support/support_flow</span></div><span class="stc"><svg class="lu st"><use href="#i-star"/></svg></span><span class="ed"><svg class="lu"><use href="#i-pen"/></svg>Edit</span><svg class="lu dt"><use href="#i-dots"/></svg></div><div class="wrow w-app"><svg class="lu ki"><use href="#i-app"/></svg><div class="tx"><b>Support desk</b><span>f/support/support_desk</span></div><span class="stc"><svg class="lu st"><use href="#i-star"/></svg></span><span class="ed"><svg class="lu"><use href="#i-pen"/></svg>Edit</span><svg class="lu dt"><use href="#i-dots"/></svg></div></div>
+    </div>
+  </div>
+
+</div>
+<script src="../icons.js"></script>
+<script>
+  document.querySelectorAll("[data-icon]").forEach((el, n) => {
+    const svg = window.CLIP_ICONS?.[el.dataset.icon];
+    if (svg) el.innerHTML = svg.replace(/\bid="([^"]+)"/g, `id="$1-${n}"`).replace(/url\(#([^)]+)\)/g, `url(#$1-${n})`).replace(/href="#([^"]+)"/g, `href="#$1-${n}"`);
+  });
+  const fit = () => { const s = Math.min(innerWidth / 1280, innerHeight / 720); document.querySelector("#stage").style.transform = `scale(${s})`; };
+  addEventListener("resize", fit); fit();
+</script>
